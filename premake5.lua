@@ -6,7 +6,7 @@ local openssl = premake.extensions.openssl
 
 -- Configure the OpenSSL build
 openssl_config = {
-	src_dir = ROOT_DIR .. "openssl_tarball/",
+	src_dir = ROOT_DIR .. "openssl-1.0.2p/",
 	include_dir = ROOT_DIR .. "include/",
 	excluded_libs = {
 		"jpake",
@@ -20,15 +20,13 @@ openssl_config = {
 --
 -- Generate public OpenSSL header files
 -- 
-if _ACTION == "openssl_headers" then
-	print "Generating header files"
-	premake.extensions.openssl.copy_public_headers(openssl_config)
-	os.exit(0)
-end
+print "Generating header files"
+premake.extensions.openssl.copy_public_headers(openssl_config)
 
 --
 -- Generate a solution with crypto/ssl Static Library projects
 --
+--[[
 solution "libssl"
 	configurations {
 		"debug",
@@ -38,20 +36,69 @@ solution "libssl"
 	language "C"
 	kind "StaticLib"
 
-	location (ROOT_DIR .. ".build/projects/")
-	objdir (ROOT_DIR .. ".build/obj/")
+	location (ROOT_DIR .. "../../Build/")
+	objdir (ROOT_DIR .. "../../Build/obj/")
 
 	configuration {"debug"}
-		targetdir (ROOT_DIR .. "lib/debug/")
+		targetdir (ROOT_DIR .. "../../Build/lib/debug/")
 
 	configuration {"release"}
 		optimize "Speed"
-		targetdir (ROOT_DIR .. "lib/release/")
+		targetdir (ROOT_DIR .. "../../Build/lib/release/")
 
 	configuration {}
+--]]
 
 project "crypto"
+	configurations {
+		"Debug",
+		"Release",
+	}
+
+	filter { 'system:windows' }
+		platforms   { 'x86', 'x64' }
+
+	language "C"
+	kind "StaticLib"
+
+	location (ROOT_DIR .. "../../Build/")
+
+	--location (ROOT_DIR .. "../../Build/")
+	--objdir (ROOT_DIR .. "../../Build/Bin/")
+
+	--configuration {"Debug"}
+		--targetdir (ROOT_DIR .. "../../Build/Bin/Debug/")
+
+	configuration {"Release"}
+		optimize "Speed"
+		--targetdir (ROOT_DIR .. "../../Build/Bin/Release/")
+
+	configuration {}
 	openssl.crypto_project(openssl_config)
 
 project "ssl"
+	configurations {
+		"Debug",
+		"Release",
+	}
+
+	filter { 'system:windows' }
+		platforms   { 'x86', 'x64' }
+
+	language "C"
+	kind "StaticLib"
+
+	location (ROOT_DIR .. "../../Build/")
+
+	--location (ROOT_DIR .. "../../Build/")
+	--objdir (ROOT_DIR .. "../../Build/obj/")
+
+	--configuration {"Debug"}
+	--	targetdir (ROOT_DIR .. "../../Build/Bin/Debug/")
+
+	configuration {"Release"}
+		optimize "Speed"
+	--	targetdir (ROOT_DIR .. "../../Build/Bin/Release/")
+
+	configuration {}
 	openssl.ssl_project(openssl_config)
