@@ -50,6 +50,9 @@ solution "libssl"
 --]]
 
 project "crypto"
+	language "C"
+	kind "StaticLib"
+
 	configurations {
 		"Debug",
 		"Release",
@@ -57,9 +60,6 @@ project "crypto"
 
 	filter { 'system:windows' }
 		platforms   { 'x86', 'x64' }
-
-	language "C"
-	kind "StaticLib"
 
 	location (ROOT_DIR .. "../../Build/")
 
@@ -77,6 +77,9 @@ project "crypto"
 	openssl.crypto_project(openssl_config)
 
 project "ssl"
+	language "C"
+	kind "StaticLib"
+
 	configurations {
 		"Debug",
 		"Release",
@@ -84,9 +87,6 @@ project "ssl"
 
 	filter { 'system:windows' }
 		platforms   { 'x86', 'x64' }
-
-	language "C"
-	kind "StaticLib"
 
 	location (ROOT_DIR .. "../../Build/")
 
